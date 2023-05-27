@@ -87,7 +87,7 @@ TEX_FOOTER = r'''\]
 \end{document}'''
 
 # Globals.
-verbose = True
+verbose = False
 
 class EApp(Exception): pass     # Application specific exception.
 
@@ -120,7 +120,7 @@ def run(cmd):
         cmd += ' 2>%s 1>&2' % os.devnull
     print_verbose('executing: %s' % cmd)
     if os.system(cmd):
-        raise 'failed command: %s' % cmd
+        raise EApp('failed command: %s' % cmd)
 
 def latex2png(input, outfile, dpi):
     '''Convert LaTeX input to PNG file named outfile.'''
