@@ -1,2 +1,3 @@
 # StewartBOT
-Bot do Discord para as monitorias do ICT-UNIFESP
+Bot do Discord para as monitorias do ICT-UNIFESP.
+
