@@ -1,0 +1,43 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - deploy
+    paths:
+      - client/*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Run Git checkout
+        uses: actions/checkout@v3
+      
+      - name: Copy files
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT }}
+          source: client/*
+          target: ${{ secrets.VPS_PATH }}
+          strip_components: 1
+
+  run:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Run
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            screen -XS stewartbot_gh quit
+            screen -dmS stewartbot_gh bash -c 'python ${{ secrets.VPS_PATH }}/stewart.py; exec sh'
