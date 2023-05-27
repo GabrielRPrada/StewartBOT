@@ -8,11 +8,13 @@ on:
       - client/*
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Run Git checkout
         uses: actions/checkout@v3
+      
       - name: Copy files
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -25,8 +27,9 @@ jobs:
           strip_components: 1
 
   run:
-    needs: deploy
+    needs: build
     runs-on: ubuntu-latest
+    
     steps:
       - name: Run
         uses: appleboy/ssh-action@v0.1.10
@@ -35,4 +38,6 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           port: ${{ secrets.VPS_PORT }}
-          script: cd ${{ secrets.VPS_PATH }} && ls
+          script: |
+            screen -XS stewartbot_gh quit
+            screen -dmS stewartbot_gh bash -c 'python ${{ secrets.VPS_PATH }}/stewart.py; exec sh'
