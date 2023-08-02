@@ -3,17 +3,22 @@ import os
 
 import discord
 from discord import app_commands
+from discord import ui
 
 import asyncio
 
 import latex2png
+from agenda import AgendaView, LeitorAgenda, gerar_embed_agenda
 
+
+leitor_agenda = LeitorAgenda()
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 invite_url = ""
+
 
 @tree.command(name = "ping", description = "Teste se o bot te ouve")
 async def ping(interaction):
@@ -39,6 +44,24 @@ async def latex(interaction, latex: str, dpi: int=500):
     finally:
         f.close()
         os.remove(fn)
+
+
+
+
+@tree.command(name="agenda", description="Consulte a agenda do ICT (http://agendasjc.unifesp.br/)")
+async def agenda(interaction, sala: str="", evento: str="", horario: str="", dia: str=""):
+    if not sala and not dia and not horario and not evento:
+        await interaction.response.send_message("Opa! Por favor, preencha pelo menos um dos argumentos: **sala**, **horario**, **dia** ou **evento** (esse seria o nome da aula/evento agendado)", ephemeral=True)
+        return
+    query = leitor_agenda.query_agenda(sala, evento, horario, dia)
+    if len(query) == 0:
+        await interaction.response.send_message("Nenhum evento foi encontrado com esses parâmetros :(", ephemeral=True)
+    else:
+        embed = gerar_embed_agenda(query[0])
+        message = await interaction.response.send_message(embed=embed, view=AgendaView(query))
+
+
+        
 
 @client.event
 async def on_ready():
