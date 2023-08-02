@@ -45,9 +45,6 @@ async def latex(interaction, latex: str, dpi: int=500):
         f.close()
         os.remove(fn)
 
-
-
-
 @tree.command(name="agenda", description="Consulte a agenda do ICT (http://agendasjc.unifesp.br/)")
 async def agenda(interaction, sala: str="", evento: str="", horario: str="", dia: str=""):
     if not sala and not dia and not horario and not evento:
@@ -58,10 +55,7 @@ async def agenda(interaction, sala: str="", evento: str="", horario: str="", dia
         await interaction.response.send_message("Nenhum evento foi encontrado com esses parâmetros :(", ephemeral=True)
     else:
         embed = gerar_embed_agenda(query[0])
-        message = await interaction.response.send_message(embed=embed, view=AgendaView(query))
-
-
-        
+        await interaction.response.send_message(embed=embed, view=AgendaView(query))
 
 @client.event
 async def on_ready():
