@@ -14,15 +14,15 @@ from agenda import AgendaView, LeitorAgenda, gerar_embed_agenda
 leitor_agenda = LeitorAgenda()
 
 intents = discord.Intents.default()
-client = discord.Client(intents=intents)
+activity = discord.Activity(name='Top da Derivada', type=discord.ActivityType.competing)
+client = discord.Client(intents=intents, activity=activity)
 tree = app_commands.CommandTree(client)
 
 invite_url = ""
 
-
 @tree.command(name = "ping", description = "Teste se o bot te ouve")
 async def ping(interaction):
-    await interaction.response.send_message("Pong! ")
+    await interaction.response.send_message("Pong!")
 
 @tree.command(name="convidar", description="Gera um link para convidar o bot para o teu servidor")
 async def invite(interaction):
@@ -68,7 +68,6 @@ async def on_ready():
 @client.event
 async def on_command_error(interaction,err):
     await interaction.response.send_message(f"Opa, algo deu errado! `{err}`\n\nSerá que foi um erro meu? Para dúvidas, fale com Gabriel (refrigerador#8298 no discord) ou crie uma issue: https://github.com/GabrielRPrada/StewartBOT/issues/new/choose")
-    
 
 tokenf = open("token.txt", "r")
 token = tokenf.readline()
